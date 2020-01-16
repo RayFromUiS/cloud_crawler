@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[34]:
 
 
 from selenium import webdriver
@@ -9,13 +8,13 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import WebDriverException
 from http_request_randomizer.requests.proxy.requestProxy import RequestProxy
 
 
-# In[35]:
 
 
-class Collect_satisfy_proxies:
+class CollectSatisfyProxies:
     '''collect satisfy proxy for such url under certain respond time
     Args:
         url,                Required, in string format, the url starter you want to scrapy
@@ -98,30 +97,3 @@ class Collect_satisfy_proxies:
                 break
                     
         return self.satisfy_proxies
-
-    
-
-
-# In[36]:
-
-
-url ='http://163.com'
-
-
-# In[37]:
-
-
-collect_satisfy_proxy = Collect_satisfy_proxies(url,30000,1)
-
-
-# In[ ]:
-
-
-collect_satisfy_proxy.collect_satisfy_proxies()
-
-
-# In[ ]:
-
-
-
-
