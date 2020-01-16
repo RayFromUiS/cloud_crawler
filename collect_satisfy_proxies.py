@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[7]:
+# In[34]:
 
 
-import selenium
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
@@ -13,33 +12,36 @@ from selenium.common.exceptions import TimeoutException
 from http_request_randomizer.requests.proxy.requestProxy import RequestProxy
 
 
-from time import sleep
-import time
-import random
-
-
-# In[10]:
+# In[35]:
 
 
 class Collect_satisfy_proxies:
-    '''collect satisfy proxy for such url
+    '''collect satisfy proxy for such url under certain respond time
     Args:
-        url and respond time criterior for screening the proxy
+        url,                Required, in string format, the url starter you want to scrapy
+        res_time_criterior, Required, the time constrains for responding,in milliseconds
+        number_of_proxies,  Required, numer of proxies you needed to rotate
     Returns:
-        raw proxy and satisfy time critrior standary proxy for reaching the url
+        raw proxy,          List of objects
+        screend proxy,      Satisfing proxy for reaching the url,list of objects
+    Raise:
+        TimeoutException
+        WebDriverException      
     '''
 #     url = 'http://www.aogc.state.ar.us/welldata/production/default.aspx'
+
     
-    def __init__(self,url,res_time_criterior):
+    def __init__(self,url,res_time_criterior,number_of_proxies):
         self.url = url
         self.res_time_criterior = res_time_criterior ## in milliseconds
         self.proxies= None
-        self.satisfy_proxies = [None]
+        self.satisfy_proxies = []
+        self.numer_of_proxies = number_of_proxies
         
     def get_proxies(self):
         '''return a proxy driver
         '''
-        req_proxy = RequestProxy() #you may get different number of proxy when  you run this at each time
+        req_proxy = RequestProxy() #random proxies
         self.proxies = req_proxy.get_proxy_list() #this will create proxy list
         return self.proxies
 
@@ -48,6 +50,7 @@ class Collect_satisfy_proxies:
         code_source for navigation time = https://stackoverflow.com/questions
         /37460214/how-to-measure-response-time-for-both-loading-and-search-time-for-a-website-se
         '''
+        restime = 0 #inital restime
         ## set proxy
         PROXY = proxy.get_address()
         webdriver.DesiredCapabilities.CHROME['proxy']={
@@ -70,6 +73,8 @@ class Collect_satisfy_proxies:
                 restime = backendPerformance + frontendPerformance
             except TimeoutException as e:
                 print(e)
+            except WebDriverException as e:
+                print(e)
 
         return restime
 
@@ -77,16 +82,18 @@ class Collect_satisfy_proxies:
         '''return satisfy proxy
         '''
         ##get proxy
-        self.proxies = get_proxies(self)
+        self.proxies = self.get_proxies()
+        print(type(self.proxies))
         ##for proxy in proxies:
         for proxy in self.proxies:
             ####run test on proxy;
-            test_time = test_driver_res(self.url,proxy)
+            print(dir(proxy))
+            test_time = self.test_driver_res(proxy)
             ####if test satisfy the condition:
-            if test_time < res_time:
+            if test_time < self.res_time_criterior:
                 ####save the test proxy
                 self.satisfy_proxies.append(proxy)
-                if len(self.satisfy_proxies) > 10:
+                if len(self.satisfy_proxies) > self.numer_of_proxies:
                     print(f'Alrady collect {len(self.satisfy_proxies)} of proxies')
                 break
                     
@@ -95,8 +102,26 @@ class Collect_satisfy_proxies:
     
 
 
+# In[36]:
+
+
+url ='http://163.com'
+
+
+# In[37]:
+
+
+collect_satisfy_proxy = Collect_satisfy_proxies(url,30000,1)
+
+
 # In[ ]:
 
 
-collect_satisfy_proxy = Collect_satisfy_proxies(url,30000)
+collect_satisfy_proxy.collect_satisfy_proxies()
+
+
+# In[ ]:
+
+
+
 
