@@ -14,13 +14,6 @@ from selenium.webdriver.common.by import By
 from CollectSatisfyProxies import CollectSatisfyProxies
 
 
-# In[11]:
-
-
-url = 'http://www.aogc.state.ar.us/welldata/production/default.aspx'
-
-
-# In[12]:
 
 
 class Well_crawler:
@@ -41,13 +34,13 @@ class Well_crawler:
         '''
         ## set proxy
         PROXY = self.proxy.get_address()
-        webdriver.DesiredCapabilities.CHROME['proxy']={
+        webdriver.DesiredCapabilities.FIREFOX['proxy']={
         "httpProxy":PROXY,
         "ftpProxy":PROXY,
         "sslProxy":PROXY,
         "proxyType":"MANUAL"}
 
-        with webdriver.Chrome() as driver:
+        with webdriver.Firefox(executable_path=r'driver\geckodriver.exe') as driver:
             driver.get(self.url)
             ## click 'field' button and go searching
             driver.find_element(By.CSS_SELECTOR,input_id).click()
@@ -114,10 +107,10 @@ class Well_crawler:
         well['ID'] = well_page_soup.find('span',
                             id='cpMainContent_Container1_tabData_rptWellData_lblAPI_0') \
                             .text.strip()        
-        well['well_lat']  = well_page_soup.find('span',                            id = 'cpMainContent_Container1_tabData_rptWellData_lblLat_0')                             .text.strip()
-        well['longit']= well_page_soup.find('span',                            id = 'cpMainContent_Container1_tabData_rptWellData_lblLong_0')                             .text.strip() 
-        well['well_type'] =well_page_soup.find('span',                             id  = 'cpMainContent_Container1_tabData_rptWellData_lblWellType_0')                             .text.strip()
-        well['well_status'] =well_page_soup.find('span',                            id= 'cpMainContent_Container1_tabData_rptWellData_lblWellStatus_0')                             .text.strip()
+        well['well_lat']  = well_page_soup.find('span',id = 'cpMainContent_Container1_tabData_rptWellData_lblLat_0').text.strip()
+        well['longit']= well_page_soup.find('span',id = 'cpMainContent_Container1_tabData_rptWellData_lblLong_0').text.strip() 
+        well['well_type'] =well_page_soup.find('span',id  = 'cpMainContent_Container1_tabData_rptWellData_lblWellType_0').text.strip()
+        well['well_status'] =well_page_soup.find('span',id= 'cpMainContent_Container1_tabData_rptWellData_lblWellStatus_0').text.strip()
         ## get well production data
         page_pro_rows = prod_page.find('table',{'class':'GridViewClass'}).find_all('tr')
         ## for each row
@@ -150,41 +143,11 @@ class Well_crawler:
                 yield well_data
             
                 
-        def get_wells_from_gen(self):
-            '''iterate well data from generator
-            '''
-            for well in self.input_field_hit_search():
+        ##def get_wells_from_gen(self):
+           ## '''iterate well data from generator
+           ## '''
+           ## for well in self.input_field_hit_search():
                 self.wells.append(well)
-            return self.wells
-
-
-# In[13]:
-
-
-proxies = CollectSatisfyProxies(url,30000,1)
-
-
-# In[15]:
-
-
-satify_proxies = proxies.collect_satisfy_proxies()
-
-
-# In[ ]:
-
-
-
-
-
-# In[16]:
-
-
-for proxy in satify_proxies:
-    
-
-
-# In[ ]:
-
-
+           ## return self.wells
 
 
