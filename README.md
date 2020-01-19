@@ -86,21 +86,21 @@ Then tasks can be solved as the following way and working flow.
 				is not identified on your local machine.
 				5. An ECDSA key fingerprint is now added and you are connected to the remote server.
 				
-				Here is the example of a connection request using the OpenSSH client. We will specify the port number as well:
-				```
-					username@machine:~$ ssh phoenixnap@185.52.53.222 –p7654 phoenixnap@185.52.53.222’s password:
-					The authenticity of host '185.52.53.222 (185.52.53.222)' can't be established. 
-					ECDSA key fingerprint is SHA256:9lyrpzo5Yo1EQAS2QeHy9xKceHFH8F8W6kp7EX2O3Ps.
-					Are you sure you want to continue connecting (yes/no)? yes
-					Warning: Permanently added ' 185.52.53.222' (ECDSA) to the list of known hosts. 
-					username@host:~$
-				```
-				You are now able to manage and control a remote machine using your terminal. 
-				If you have trouble connecting to a remote server, make sure that:
-				* The IP address of the remote machine is correct.
-				* The port SSH daemon is listening to is not blocked by a firewall or forwarded incorrectly.
-				* Your username and password are correct.
-				* The SSH software is installed properly.
+			Here is the example of a connection request using the OpenSSH client. We will specify the port number as well:
+			```
+				username@machine:~$ ssh phoenixnap@185.52.53.222 –p7654 phoenixnap@185.52.53.222’s password:
+				The authenticity of host '185.52.53.222 (185.52.53.222)' can't be established. 
+				ECDSA key fingerprint is SHA256:9lyrpzo5Yo1EQAS2QeHy9xKceHFH8F8W6kp7EX2O3Ps.
+				Are you sure you want to continue connecting (yes/no)? yes
+				Warning: Permanently added ' 185.52.53.222' (ECDSA) to the list of known hosts. 
+				username@host:~$
+			```
+		You are now able to manage and control a remote machine using your terminal. 
+		If you have trouble connecting to a remote server, make sure that:
+		* The IP address of the remote machine is correct.
+		* The port SSH daemon is listening to is not blocked by a firewall or forwarded incorrectly.
+		* Your username and password are correct.
+		* The SSH software is installed properly.
 				
 	*Windows
 	
