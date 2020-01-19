@@ -1,7 +1,17 @@
 #!/usr/bin/env python
 # coding: utf-8
-
-
+'''collect satisfy proxy for such url under certain respond time
+Args:
+    url,                Required, in string format, the url starter you want to scrapy
+    res_time_criterior, Required, the time constrains for responding,in milliseconds
+    number_of_proxies,  Required, numer of proxies you needed to rotate
+Returns:
+    raw proxy,          List of objects
+    screend proxy,      Satisfing proxy for reaching the url,list of objects
+Raise:
+    TimeoutException
+    WebDriverException      
+'''
 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -9,24 +19,11 @@ from selenium.webdriver.support.select import Select
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import WebDriverException
+from selenium.common.exceptions import SessionNotCreatedException
 from http_request_randomizer.requests.proxy.requestProxy import RequestProxy
 
-
-
-
 class CollectSatisfyProxies:
-    '''collect satisfy proxy for such url under certain respond time
-    Args:
-        url,                Required, in string format, the url starter you want to scrapy
-        res_time_criterior, Required, the time constrains for responding,in milliseconds
-        number_of_proxies,  Required, numer of proxies you needed to rotate
-    Returns:
-        raw proxy,          List of objects
-        screend proxy,      Satisfing proxy for reaching the url,list of objects
-    Raise:
-        TimeoutException
-        WebDriverException      
-    '''
+
 #     url = 'http://www.aogc.state.ar.us/welldata/production/default.aspx'
 
     
@@ -57,8 +54,13 @@ class CollectSatisfyProxies:
         "ftpProxy":PROXY,
         "sslProxy":PROXY,
         "proxyType":"MANUAL"}
+        ##add driver options,headless and user agent specification
+        chrome_options=Options()
+        chrome_options.add_argument('--headless')
+        chrome_options.add_argument('--disable-gpu')
+        chrome_options.add_argument("Chrome/71.0.3578.30")
         ## run test on proxy
-        with webdriver.Chrome() as driver:
+        with webdriver.Chrome(executable_path=r'driver\chromedriver.exe') as driver:
             try:
                 driver.get(self.url)
                 navigationStart = driver.execute_script("return window.performance.timing.navigationStart")
@@ -67,12 +69,14 @@ class CollectSatisfyProxies:
                 ##computing respond time
                 backendPerformance = responseStart - navigationStart
                 frontendPerformance = domComplete - responseStart
-                print("Back End: %s" % backendPerformance)
-                print("Front End: %s" % frontendPerformance)
+                #print("Back End: %s" % backendPerformance)
+                #print("Front End: %s" % frontendPerformance)
                 restime = backendPerformance + frontendPerformance
             except TimeoutException as e:
                 print(e)
             except WebDriverException as e:
+                print(e)
+            except SessionNotCreatedException as e:
                 print(e)
 
         return restime
@@ -82,18 +86,21 @@ class CollectSatisfyProxies:
         '''
         ##get proxy
         self.proxies = self.get_proxies()
-        print(type(self.proxies))
+        #print(type(self.proxies))
         ##for proxy in proxies:
         for proxy in self.proxies:
             ####run test on proxy;
-            print(dir(proxy))
+            ####print(dir(proxy))
             test_time = self.test_driver_res(proxy)
             ####if test satisfy the condition:
             if test_time < self.res_time_criterior:
-                ####save the test proxy
+                ######save the test proxy
                 self.satisfy_proxies.append(proxy)
                 if len(self.satisfy_proxies) > self.numer_of_proxies:
                     print(f'Alrady collect {len(self.satisfy_proxies)} of proxies')
-                break
+                    break
                     
         return self.satisfy_proxies
+
+
+    
