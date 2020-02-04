@@ -104,7 +104,11 @@ Then tasks can be solved as the following way and working flow.
 				
 	*Windows
 	
+Create a dock containers for packing running files
+
+	
 	*Linux
+
 
 
 
